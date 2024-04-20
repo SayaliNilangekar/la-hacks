@@ -2,6 +2,8 @@ import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform
 import React, { useState, useEffect } from 'react';
 import { Feather } from '@expo/vector-icons'; // Import the Feather icon set
 import { ListItem } from '@rneui/themed';
+import { Dropdown } from 'react-native-element-dropdown';
+import drugsList from './druglist.json'
 
 import {Alert, Modal, StyleSheet, Pressable } from 'react-native';
 
@@ -52,6 +54,47 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold'
   },
+
+  container: {
+    backgroundColor: 'white',
+    padding: 16,
+  },
+  dropdown: {
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    width: 350,
+    marginBottom: 20
+  },
+  icon: {
+    marginRight: 5,
+  },
+  label: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    left: 22,
+    top: 8,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+    color: 'black'
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
+  },
 });
 
 
@@ -60,6 +103,9 @@ export default function Tab() {
   const [expandedOne, setExpandedOne] = useState(false);
   const [expandedTwo, setExpandedTwo] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const [dropdownValue, setDropdownValue] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
   // const [marginTop, setMarginTop] = useState(20);
 
 
@@ -83,6 +129,17 @@ export default function Tab() {
   //     keyboardDidHideListener.remove();
   //   };
   // }, []);
+
+  // const renderLabel = () => {
+  //   if ( dropdownValue || isFocus) {
+  //     return (
+  //       <Text style={[styles.label, isFocus && { color: 'blue' }]}>
+  //         Dropdown label
+  //       </Text>
+  //     );
+  //   }
+  //   return null;
+  // };
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 20 }}>
@@ -121,7 +178,7 @@ export default function Tab() {
                 <View style={styles.modalView}>
                   <Text style={styles.modalText}>Add a new prescription medication</Text>
                   <View>
-                    <TextInput
+                    {/* <TextInput
                       style={{
                         height: 50,
                         width: 365,
@@ -132,7 +189,39 @@ export default function Tab() {
                         marginBottom: 20,
                       }}
                       placeholder="Search for medication"
-                    />
+                    /> */}
+
+          {/* {renderLabel()} */}
+                  <Dropdown
+                    style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                    placeholderStyle={styles.placeholderStyle}
+                    selectedTextStyle={styles.selectedTextStyle}
+                    inputSearchStyle={styles.inputSearchStyle}
+                    iconStyle={styles.iconStyle}
+                    data={drugsList}
+                    search
+                    maxHeight={300}
+                    labelField="name"
+                    valueField="id"
+                    placeholder={!isFocus ? 'Select item' : '...'}
+                    searchPlaceholder="Search..."
+                    value={dropdownValue}
+                    onFocus={() => setIsFocus(true)}
+                    onBlur={() => setIsFocus(false)}
+                    onChange={item => {
+                      setDropdownValue(item.id);
+                      setIsFocus(false);
+                    }}
+                    // renderLeftIcon={() => (
+                    //   <AntDesign
+                    //     style={styles.icon}
+                    //     color={isFocus ? 'blue' : 'black'}
+                    //     name="Safety"
+                    //     size={20}
+                    //   />
+                    // )}
+                  />
+
                   </View>
                   
                   <Pressable
