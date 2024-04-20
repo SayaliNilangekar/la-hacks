@@ -3,6 +3,7 @@ import Constants from 'expo-constants';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome6 } from '@expo/vector-icons';
 
 import profilePic from '../../assets/images/dp.png';
@@ -47,6 +48,12 @@ export default function Tab() {
                     <Text style={styles.head}><FontAwesome6 name="pills" size={16} color="black" />    Medical Conditions :</Text>
                     <View>
                         <Text style={{fontSize: 16, marginBottom: 4}}> Diabetic</Text>
+                    </View>
+                </View>
+                <View style={{flexDirection: 'row', alignContent: 'flex-start', paddingVertical: 12 }}>
+                    <Text style={styles.head}><MaterialIcons name="bloodtype" size={16} color="black" />    Blood Group :</Text>
+                    <View>
+                        <Text style={{fontSize: 16, marginBottom: 4}}> A+</Text>
                     </View>
                 </View>
                 <Button title='Edit Profile'/>
