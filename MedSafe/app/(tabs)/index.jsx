@@ -1,12 +1,88 @@
-import { View, Text, TextInput, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import { Feather } from '@expo/vector-icons'; // Import the Feather icon set
 import { ListItem } from '@rneui/themed';
+
+import {Alert, Modal, StyleSheet, Pressable } from 'react-native';
+
+
+const styles = StyleSheet.create({
+  centeredView: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  modalView: {
+    marginBottom: 20,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    paddingBottom: 20,
+    padding: 30,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+    height: 900,
+    width: 408
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold'
+  },
+});
+
 
 export default function Tab() {
 
   const [expandedOne, setExpandedOne] = useState(false);
   const [expandedTwo, setExpandedTwo] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  // const [marginTop, setMarginTop] = useState(20);
+
+
+  // useEffect(() => {
+  //   const keyboardDidShowListener = Keyboard.addListener(
+  //     'keyboardDidShow',
+  //     () => {
+  //       setMarginTop(500);
+  //     }
+  //   );
+  //   const keyboardDidHideListener = Keyboard.addListener(
+  //     'keyboardDidHide',
+  //     () => {
+  //       setMarginTop(20);
+  //     }
+  //   );
+
+  //   // Clean up listeners when component unmounts
+  //   return () => {
+  //     keyboardDidShowListener.remove();
+  //     keyboardDidHideListener.remove();
+  //   };
+  // }, []);
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 20 }}>
@@ -30,6 +106,45 @@ export default function Tab() {
         </View>
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              Alert.alert('Modal has been closed.');
+              setModalVisible(!modalVisible);
+            }}>
+            {/* <KeyboardAvoidingView style={styles.centeredView} behavior="padding" keyboardVerticalOffset={-400}> */}
+            <ScrollView >
+            <KeyboardAvoidingView >
+              <View style={styles.centeredView}>
+                <View style={styles.modalView}>
+                  <Text style={styles.modalText}>Add a new prescription medication</Text>
+                  <View>
+                    <TextInput
+                      style={{
+                        height: 50,
+                        width: 365,
+                        borderColor: 'gray',
+                        borderRadius: 8,
+                        borderWidth: 1,
+                        paddingHorizontal: 10,
+                        marginBottom: 20,
+                      }}
+                      placeholder="Search for medication"
+                    />
+                  </View>
+                  
+                  <Pressable
+                    style={[styles.button, styles.buttonClose]}
+                    onPress={() => setModalVisible(!modalVisible)}>
+                    <Text style={styles.textStyle}>Hide Modal</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </KeyboardAvoidingView>
+            </ScrollView>
+          </Modal>
           <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 20 }}>
             Prescriptions
           </Text>
@@ -45,9 +160,7 @@ export default function Tab() {
                 height: 35,
                 width: 60
               }}
-              onPress={() => {
-                // Action to add medication
-              }}
+              onPress={() => setModalVisible(true)}
             >
               <Text style={{ color: 'white', fontSize: 16 }}>+ Add</Text>
           </TouchableOpacity>
