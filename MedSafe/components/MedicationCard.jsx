@@ -127,29 +127,36 @@ const MedicationCard = ({ medication, startDate, endDate, alert, dosage, frequen
             <Text style={{ fontSize: 13, paddingLeft: 15}}>{frequency}</Text>
         </View>
       </View>
-
-      {alert && ( // Conditionally render alert if provided
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            // backgroundColor: '#fab4b3',
-            backgroundColor: 'white',
-            borderRadius: 5,
-            padding: 5,
-            marginTop: 25,
-            marginBottom: 10,
-            borderWidth: 2,
-            // borderColor: '#fab4b3',
-            borderColor: 'red'
-          }}
-        >
-          <Ionicons name="alert-circle-outline" size={30} color="red" style={{ marginRight: 5 }} />
-          <View style={{ flex: 1 }}>
-            <Text style={{ fontWeight: 'bold', padding: 5, color: 'red' }}>{alert}</Text>
-          </View>
+      
+      {alert && alert.length > 0 && (
+        <View>
+        {alert.map((message, index) => (
+            <View
+                key={index}
+                style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    // backgroundColor: '#fab4b3',
+                    backgroundColor: 'white',
+                    borderRadius: 5,
+                    padding: 5,
+                    marginTop: index === 0 ? 35 : 5,
+                    marginBottom: 10,
+                    borderWidth: 2,
+                    // borderColor: '#fab4b3',
+                    borderColor: 'red'
+                }}
+                >
+                <Ionicons name="alert-circle-outline" size={30} color="red" style={{ marginRight: 5 }} />
+                <View style={{ flex: 1 }}>
+                    <Text style={{ fontWeight: 'bold', padding: 5, color: 'red' }}>{alert}</Text>
+                </View>
+            </View>
+        ))}
         </View>
       )}
+
+
     </View>
   );
 }
