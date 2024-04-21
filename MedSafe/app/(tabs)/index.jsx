@@ -292,7 +292,7 @@ export default function Tab() {
         <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>
           Hello Sayali!
         </Text>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+        {/* <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
           <TextInput
             style={{
               height: 50,
@@ -306,7 +306,7 @@ export default function Tab() {
             placeholder="Search for medication"
             placeholderTextColor="gray"
           />
-        </View>
+        </View> */}
 
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Modal

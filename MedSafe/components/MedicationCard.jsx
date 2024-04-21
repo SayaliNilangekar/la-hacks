@@ -105,10 +105,11 @@ const MedicationCard = ({ medication, startDate, endDate, alert, dosage, frequen
       }}
     >
       <View>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{medication}</Text>
-          <Text style={{ fontSize: 14, paddingTop: 2 }}>{formattedStartDate} - {formattedEndDate}</Text>
-        </View>
+        {/* <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}> */}
+        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{medication}</Text>
+        {/* </View> */}
+        <Text style={{ fontSize: 14 }}>{formattedStartDate} - {formattedEndDate}</Text>
+
         <Text style={{ fontSize: 13, fontWeight: 'bold', color: status === 'ACTIVE' ? 'green' : 'grey' }}>{status}</Text>
       </View>
 
