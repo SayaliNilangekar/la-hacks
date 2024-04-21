@@ -66,7 +66,12 @@ const formatDate = (dateString) => {
     return 'UNKNOWN';
   };
 
-const MedicationCard = ({ medication, startDate, endDate, alert, dosage, frequency }) => {
+  const getColor = (index) => {
+    const colors = ['#dbf8a1', '#c0e6f5', '#ffdea6'];
+    return colors[index % 3];
+  };
+
+const MedicationCard = ({ index, medication, startDate, endDate, alert, dosage, frequency }) => {
 
     const formattedStartDate = formatDate(startDate);
     const formattedEndDate = formatDate(endDate);
@@ -87,7 +92,7 @@ const MedicationCard = ({ medication, startDate, endDate, alert, dosage, frequen
   return (
     <View
       style={{
-        backgroundColor: status === 'ACTIVE' ? '#dbf8a1' : '#c0e6f5',
+        backgroundColor: getColor(index),
         borderRadius: 10,
         padding: 20,
         shadowColor: '#000',

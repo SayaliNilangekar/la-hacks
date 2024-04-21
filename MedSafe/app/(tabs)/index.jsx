@@ -536,7 +536,7 @@ export default function Tab() {
                         startDate="05 Apr 2024"
                         endDate="15 Apr 2024"
                         status="SCHEDULED"
-                        key={index}
+                        index={index}
                     />
             )} />
             )
