@@ -552,7 +552,7 @@ export default function Tab() {
           <MedicationCard
             medication="Selegiline"
             startDate="04/01/2024"
-            endDate="04/15/2024"
+            endDate="04/26/2024"
             status="ACTIVE"
             alert="This medication should not be used with Tetra. This medication should not be used with Tetra. This medication should not be used with Tetra."
             duration="2 weeks"
@@ -561,9 +561,11 @@ export default function Tab() {
           />
           <MedicationCard
             medication="Tetrabenazine"
-            startDate="04/05/2024"
-            endDate="04/15/2024"
+            startDate="05/05/2024"
+            endDate="05/15/2024"
             status="SCHEDULED"
+            dosage="5 ml"
+            frequency="2 times a day"
           />
         </View>
 
