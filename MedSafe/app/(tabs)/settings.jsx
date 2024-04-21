@@ -56,7 +56,11 @@ export default function Tab() {
                         <Text style={{fontSize: 16, marginBottom: 4}}> A+</Text>
                     </View>
                 </View>
-                <Button title='Edit Profile'/>
+                <Button style={{borderRadius: 12,
+        marginTop: 12,
+        padding: 10,
+        elevation: 2,
+        backgroundColor: '#3b7be8',}} title='Edit Profile'/>
             </View>
             <TouchableOpacity style={styles.history}>
                 <Text style={{fontSize: 16}}>Prescription History</Text><MaterialCommunityIcons name="chevron-right" size={24} color="black" />
@@ -79,11 +83,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#a6c7ff'
     },
     profileContainer: {
-        borderWidth: 4,
+        borderWidth: 2,
         width: 100,
         aspectRatio: 1,
         borderRadius: 50,
-        borderColor: '#57467B',
+        borderColor: 'black',
     },
     profileSection: {
         width: "100%",
@@ -94,12 +98,12 @@ const styles = StyleSheet.create({
     image: {
         flex: 1,
         width: '100%',
-        backgroundColor: '#0553',
+        backgroundColor: 'black',
         borderRadius: 50,
     },
     name: {
         fontSize: 28,
-        color: "#524948",
+        color: "black",
         paddingTop: 12,
     },
     profileBelow: {

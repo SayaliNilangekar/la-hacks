@@ -461,7 +461,8 @@ export default function Tab() {
                                                                 borderWidth: 0.5,
                                                                 paddingHorizontal: 10,
                                                                 marginBottom: 20,
-                                                                marginTop: 10
+                                                                marginTop: 10,
+                                                                fontSize: 16,
                                                             }}
                                                             placeholder="Medication end date"
                                                             placeholderTextColor="gray"
@@ -486,7 +487,8 @@ export default function Tab() {
                                                                 paddingHorizontal: 10,
                                                                 marginBottom: 20,
                                                                 marginTop: 10,
-                                                                width: 210
+                                                                width: 210,
+                                                                fontSize: 16,
                                                             }}
                                                             placeholder="Dosage amount"
                                                             placeholderTextColor="gray"
