@@ -62,7 +62,7 @@ export default function Tab() {
                 <Text style={{fontSize: 16}}>Prescription History</Text><MaterialCommunityIcons name="chevron-right" size={24} color="black" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.history}>
-                <Text style={{fontSize: 16, color:'red'}}>Log Out</Text><MaterialCommunityIcons name="logout" size={20} color="red" />
+                <Text style={{fontSize: 16, color:'blue'}}>Log Out</Text><MaterialCommunityIcons name="logout" size={20} color="blue" />
             </TouchableOpacity>
             <View style={{alignItems:'center', padding: 16}}>
                 <Text style={{fontSize: 10}}>MedSafe 2024</Text>
@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
     container: {
         paddingTop: Constants.statusBarHeight,
         flex: 1,
+        backgroundColor: '#a6c7ff'
     },
     profileContainer: {
         borderWidth: 4,
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
         paddingVertical: 12,
         paddingHorizontal: 16,
         borderBottomWidth: 0.5,
-        backgroundColor: '#fff',
+        backgroundColor: '#dfe8f8',
     },
     genderDob: {
         fontSize: 12,
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     history: {
         marginTop: 16,
         padding: 16,
-        backgroundColor: '#fff',
+        backgroundColor: '#d3e3ff',
         borderTopWidth: 0.5,
         borderBottomWidth: 0.5,
         flexDirection: 'row',

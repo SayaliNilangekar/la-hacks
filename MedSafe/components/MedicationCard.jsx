@@ -71,7 +71,7 @@ const formatDate = (dateString) => {
     return colors[index % 3];
   };
 
-const MedicationCard = ({ index, medication, startDate, endDate, alert, dosage, frequency }) => {
+const MedicationCard = ({ index, medication, startDate, endDate, alerts, dosage, frequency }) => {
 
     const formattedStartDate = formatDate(startDate);
     const formattedEndDate = formatDate(endDate);
@@ -86,6 +86,9 @@ const MedicationCard = ({ index, medication, startDate, endDate, alert, dosage, 
     // if (startDateObj > currentDate) {
     //     status = 'SCHEDULED';
     // }
+
+    const majorAlerts = alerts.filter(alert => alert.level === 'Major');
+    const moderateAlerts = alerts.filter(alert => alert.level === 'Moderate');
 
     const status = getStatus(startDate, endDate);
 
@@ -134,7 +137,7 @@ const MedicationCard = ({ index, medication, startDate, endDate, alert, dosage, 
         </View>
       </View>
       
-      {alert && alert.length > 0 && (
+      {/* {alert && alert.length > 0 && (
         <View>
         {alert.map((message, index) => (
             <View
@@ -155,13 +158,66 @@ const MedicationCard = ({ index, medication, startDate, endDate, alert, dosage, 
                 >
                 <Ionicons name="alert-circle-outline" size={30} color="red" style={{ marginRight: 5 }} />
                 <View style={{ flex: 1 }}>
-                    <Text style={{ fontWeight: 'bold', padding: 5, color: 'red' }}>{alert}</Text>
+                    <Text style={{ fontWeight: 'bold', padding: 5, color: 'red' }}>{alert.message}</Text>
                 </View>
             </View>
         ))}
         </View>
-      )}
+      )} */}
 
+      {/* Render Major alerts */}
+      {majorAlerts.length > 0 && (
+                <View>
+                    {majorAlerts.map((alert, index) => (
+                        <View
+                            key={index}
+                            style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                backgroundColor: 'white',
+                                borderRadius: 5,
+                                padding: 5,
+                                marginTop: index === 0 ? 30 : 5,
+                                marginBottom: 5,
+                                borderWidth: 2,
+                                borderColor: 'red'
+                            }}
+                        >
+                            <Ionicons name="alert-circle-outline" size={30} color="red" style={{ marginRight: 5 }} />
+                            <View style={{ flex: 1 }}>
+                                <Text numberOfLines={3} style={{ fontWeight: 'bold', padding: 5, color: 'red' }}>{alert.reason}</Text>
+                            </View>
+                        </View>
+                    ))}
+                </View>
+            )}
+
+            {/* Render Moderate alerts */}
+            {moderateAlerts.length > 0 && (
+                <View>
+                    {moderateAlerts.map((alert, index) => (
+                        <View
+                            key={index}
+                            style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                backgroundColor: 'white',
+                                borderRadius: 5,
+                                padding: 5,
+                                marginTop: index === 0 ? 15 : 5,
+                                marginBottom: 5,
+                                borderWidth: 2,
+                                borderColor: 'orange'
+                            }}
+                        >
+                            <Ionicons name="alert-circle-outline" size={30} color="orange" style={{ marginRight: 5 }} />
+                            <View style={{ flex: 1 }}>
+                                <Text numberOfLines={3} style={{ fontWeight: 'bold', padding: 5, color: '#f77233' }}>{alert.reason}</Text>
+                            </View>
+                        </View>
+                    ))}
+                </View>
+            )}
 
     </View>
   );

@@ -1,4 +1,4 @@
-import { Button, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, ScrollView } from 'react-native';
+import { Button, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, ScrollView, Image } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Feather } from '@expo/vector-icons'; // Import the Feather icon set
 import { ListItem } from '@rneui/themed';
@@ -6,6 +6,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import drugsList from './druglist.json'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import MedicationCard from '../../components/MedicationCard';
+import { AntDesign } from '@expo/vector-icons';
 
 import { Alert, Modal, StyleSheet, Pressable, FlatList } from 'react-native';
 
@@ -142,7 +143,7 @@ const styles = StyleSheet.create({
     centeredView: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 20,
+        marginTop: 100,
     },
     modalView: {
         marginBottom: 20,
@@ -159,13 +160,15 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
-        height: 900,
+        height: 600,
         width: 408
     },
     button: {
-        borderRadius: 20,
+        borderRadius: 12,
+        marginTop: 12,
         padding: 10,
         elevation: 2,
+        backgroundColor: '#3b7be8',
     },
     buttonOpen: {
         backgroundColor: '#F194FF',
@@ -177,10 +180,12 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
         textAlign: 'center',
+        fontSize: 16
     },
     modalText: {
+        flexDirection: 'row',
         marginBottom: 15,
-        textAlign: 'center',
+        textAlign: 'left',
         fontSize: 18,
         fontWeight: 'bold'
     },
@@ -194,7 +199,7 @@ const styles = StyleSheet.create({
         borderColor: 'gray',
         borderWidth: 0.5,
         borderRadius: 8,
-        paddingHorizontal: 8,
+        paddingHorizontal: 10,
         width: 350,
         marginBottom: 20,
         marginTop: 15
@@ -297,7 +302,7 @@ export default function Tab() {
         for (const item of prescriptionList) {
             console.log(item)
             try {
-                resp = await fetch('http://10.226.0.113:5003/drugint/'+ item.id + '/' + dropdownValue)
+                resp = await fetch('http://192.168.215.97:5003/drugint/'+ item.id + '/' + dropdownValue)
                 respJ = await resp.json();
                 // console.log(respJ)
                 errors.push(respJ)
@@ -306,7 +311,7 @@ export default function Tab() {
             }
         }
         try {
-            resp = await fetch('http://10.226.0.113:5003/gemai/' + dropdownValue + '/' + dosageAmount + ' ' + units[dosageDropdownValue] + '/' + freq[freqDropdownValue])
+            resp = await fetch('http://192.168.215.97:5003/gemai/' + dropdownValue + '/' + dosageAmount + ' ' + units[dosageDropdownValue] + '/' + freq[freqDropdownValue])
             respJ = await resp.json();
             // console.log(respJ)
             errors.push(respJ)
@@ -342,15 +347,29 @@ export default function Tab() {
     };
 
     const handleEndConfirm = (date) => {
-        console.warn("A date has been picked: ", date);
+        // console.warn("A date has been picked: ", date);
         setSelectedEndDate(date);
         hideEndDatePicker();
     };
 
 
     return (
-        <View style={{ flex: 1, paddingHorizontal: 20 }}>
-            <View style={{ paddingTop: 80 }}>
+        <View style={{ flex: 1 }}>
+
+          <View style={{ backgroundColor: '#a6c7ff', height: 150, width: '100%',justifyContent: 'center', alignItems: 'center',  shadowColor: '#000',
+              shadowColor: '#000',
+              shadowOffset: {
+                  width: 0,
+                  height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 5,}}>
+                  <Image source={require('../../assets/logo_horiz-transformed.png')} style={{ width: 300, marginTop: 35, resizeMode: 'contain' }} />
+          </View>
+
+          <View style={{ paddingHorizontal: 20 }}>
+            <View style={{ paddingTop: 20 }}>
                 <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>
                     Hello Viral!
                 </Text>
@@ -368,9 +387,19 @@ export default function Tab() {
                             <KeyboardAvoidingView >
                                 <View style={styles.centeredView}>
                                     <View style={styles.modalView}>
-                                        <Text style={styles.modalText}>Add a new prescription medication</Text>
-                                        <View>
-
+                                    <TouchableOpacity
+                                      style={{
+                                          position: 'absolute',
+                                          top: 10,
+                                          right: 10,
+                                          padding: 10
+                                      }}
+                                      onPress={() => setModalVisible(!modalVisible)}
+                                    >
+                                      <AntDesign name="closecircleo" size={24} color="black" style={{position: 'fixed'}} />
+                                    </TouchableOpacity>
+                                    <Text style={styles.modalText}>Add Prescription</Text>
+                                    <View>
                                             <Dropdown
                                                 style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
                                                 placeholderStyle={styles.placeholderStyle}
@@ -382,9 +411,9 @@ export default function Tab() {
                                                 maxHeight={300}
                                                 labelField="name"
                                                 valueField="id"
-                                                placeholder={!isFocus ? 'Medication name' : '...'}
+                                                placeholder={!isFocus ? 'Medication name' : 'Select or search below'}
                                                 medicationmedication
-                                                searchPlaceholder="Search..."
+                                                searchPlaceholder="Start typing..."
                                                 value={dropdownValue}
                                                 onFocus={() => setIsFocus(true)}
                                                 onBlur={() => setIsFocus(false)}
@@ -536,18 +565,12 @@ export default function Tab() {
                                                     <Pressable
                                                         style={[styles.button, styles.buttonClose]}
                                                         onPress={handleAdd}>
-                                                        <Text style={styles.textStyle}>SAVE</Text>
+                                                        <Text style={styles.textStyle}>Save</Text>
                                                     </Pressable>
                                                 </View>
                                             )}
 
                                         </View>
-
-                                        <Pressable
-                                            style={[styles.button, styles.buttonClose]}
-                                            onPress={() => setModalVisible(!modalVisible)}>
-                                            <Text style={styles.textStyle}>Hide Modal</Text>
-                                        </Pressable>
                                     </View>
                                 </View>
                             </KeyboardAvoidingView>
@@ -558,7 +581,7 @@ export default function Tab() {
                     </Text>
                     <TouchableOpacity
                         style={{
-                            backgroundColor: 'blue',
+                            backgroundColor: '#3b7be8',
                             // paddingVertical: 12,
                             borderRadius: 8,
                             alignItems: 'center',
@@ -579,6 +602,9 @@ export default function Tab() {
                         prescriptionList && (
                             <FlatList
                                 data={prescriptionList}
+                                contentContainerStyle={{
+                                  paddingBottom: 200
+                                }}
                                 renderItem={({ item, index }) => (
                                     <MedicationCard
                                         medication={item.medication}
@@ -596,7 +622,7 @@ export default function Tab() {
 
 
             </View>
-
+            </View>
         </View>
     );
 }
