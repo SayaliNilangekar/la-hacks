@@ -254,14 +254,16 @@ export default function Tab() {
 
     const [prescriptionList, setPrescriptionList] = useState([
         {
-            medication: "Selegiline",
+            id: 900,
+            medication: "Ibuprofen",
             startDate: new Date(2024, 2, 1),
             endDate: new Date(2024, 4, 25),
             dosageAmount: "3 mg",
             frequency: 'Once a day'
         },
         {
-            medication: "Tetrabenazine",
+            id: 1,
+            medication: "Abacavir",
             startDate: new Date(2024, 2, 22),
             endDate: new Date(2024, 4, 25),
             dosageAmount: "4 ml",
@@ -290,15 +292,38 @@ export default function Tab() {
         setEndDatePickerVisibility(false);
     };
 
-    const handleAdd = () => {
+    const handleAdd = async() => {
+        let errors = []
+        for (const item of prescriptionList) {
+            console.log(item)
+            try {
+                resp = await fetch('http://10.226.0.113:5003/drugint/'+ item.id + '/' + dropdownValue)
+                respJ = await resp.json();
+                // console.log(respJ)
+                errors.push(respJ)
+            } catch {
+                //
+            }
+        }
+        try {
+            resp = await fetch('http://10.226.0.113:5003/gemai/' + dropdownValue + '/' + dosageAmount + ' ' + units[dosageDropdownValue] + '/' + freq[freqDropdownValue])
+            respJ = await resp.json();
+            // console.log(respJ)
+            errors.push(respJ)
+        } catch {
+            //
+        }
+        // console.log(errors);
         setPrescriptionList([
             ...prescriptionList,
             {
+                id: dropdownValue,
                 medication: drugDict[dropdownValue],
                 startDate: selectedDate,
                 endDate: selectedEndDate,
                 dosageAmount: dosageAmount + ' ' + units[dosageDropdownValue],
-                frequency: freq[freqDropdownValue]
+                frequency: freq[freqDropdownValue],
+                alerts: errors
             }
         ])
         setModalVisible(false);
@@ -314,7 +339,7 @@ export default function Tab() {
         setDatePickerVisibility(false);
         setEndDatePickerVisibility(false);
         setDosageAmount(null);
-    }
+    };
 
     const handleEndConfirm = (date) => {
         console.warn("A date has been picked: ", date);
@@ -561,6 +586,7 @@ export default function Tab() {
                                         endDate={item.endDate.toLocaleDateString()}
                                         dosage={item.dosageAmount}
                                         frequency={item.frequency}
+                                        alerts={item?.alerts ?? []}
                                         index={index}
                                     />
                                 )} />

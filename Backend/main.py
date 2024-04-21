@@ -68,10 +68,19 @@ def interaction(id1, id2):
         return { 'level': level, 'reason': response.text }
     return { 'level': level, 'reason': '' }
 
-@app.route('/gemai/<string:prompt>')
-def gemai_call(prompt):
+@app.route('/gemai/<string:id>/<string:dose>/<string:freq>')
+def gemai_call(id, dose, freq):
+    prompt = "I am 25 yrs old male. with known allergy of 'Iloperidone and peanut'. I have 'diabetic' medical condition. my blood group is A+, my height is 5.7 and weight is 66.6 kgs. I have been prescribed "+ drugDict[int(id)] + " to be taken "+ dose +" " + freq +". What is the hazard level from 0 to 10 for the prescribed dose. Reply in json with keys: hazard_level and reason"
     response = model.generate_content(prompt, safety_settings={HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE})
-    return extract_json(response.text)[0]
+    obj = extract_json(response.text)[0]
+    print(obj)
+    if 5 <= obj["hazard_level"] < 8:
+        level = "Moderate"
+    elif 8 <= obj["hazard_level"]:
+        level = "Major"
+    else:
+        return { 'level': "Unkown", 'reason': '' }
+    return {'level': level, 'reason': obj["reason"] }
 
 
 if __name__ == '__main__':
