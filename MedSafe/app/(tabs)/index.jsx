@@ -1,12 +1,110 @@
-import { View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, ScrollView } from 'react-native';
+import { Button, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, ScrollView } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Feather } from '@expo/vector-icons'; // Import the Feather icon set
 import { ListItem } from '@rneui/themed';
 import { Dropdown } from 'react-native-element-dropdown';
 import drugsList from './druglist.json'
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 import {Alert, Modal, StyleSheet, Pressable } from 'react-native';
 
+const frequencies = [
+  {
+    "id": 1,
+    "freq": "Once a day"
+  },
+  {
+    "id": 2,
+    "freq": "Twice a day"
+  },
+  {
+    "id": 3,
+    "freq": "Three times a day"
+  },
+  {
+    "id": 4,
+    "freq": "Four times a day"
+  },
+  {
+    "id": 5,
+    "freq": "Five times a day"
+  },
+  {
+    "id": 6,
+    "freq": "Before bed"
+  },
+  {
+    "id": 7,
+    "freq": "Every 4 hours"
+  },
+  {
+    "id": 8,
+    "freq": "Every 6 hours"
+  },
+  {
+    "id": 9,
+    "freq": "Every 8 hours"
+  },
+  {
+    "id": 10,
+    "freq": "Every 12 hours"
+  },
+  {
+    "id": 11,
+    "freq": "Every other day"
+  },
+  {
+    "id": 12,
+    "freq": "Once a week"
+  },
+  {
+    "id": 13,
+    "freq": "As needed"
+  }
+]
+
+const dosageUnits = [
+  {
+    "id": 1,
+    "unit": "mg"
+  },
+  {
+    "id": 2,
+    "unit": "mcg"
+  },
+  {
+    "id": 3,
+    "unit": "g"
+  },
+  {
+    "id": 4,
+    "unit": "mL"
+  },
+  {
+    "id": 5,
+    "unit": "units"
+  },
+  {
+    "id": 6,
+    "unit": "IU"
+  },
+  {
+    "id": 7,
+    "unit": "tablet(s)"
+  },
+  {
+    "id": 8,
+    "unit": "capsule(s)"
+  },
+  {
+    "id": 9,
+    "unit": "drop(s)"
+  },
+  {
+    "id": 10,
+    "unit": "spray(s)"
+  }
+]
 
 const styles = StyleSheet.create({
   centeredView: {
@@ -66,7 +164,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 8,
     width: 350,
-    marginBottom: 20
+    marginBottom: 20,
+    marginTop: 15
   },
   icon: {
     marginRight: 5,
@@ -81,7 +180,8 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   placeholderStyle: {
-    fontSize: 16,
+    fontSize: 14,
+    color: 'gray'
   },
   selectedTextStyle: {
     fontSize: 16,
@@ -106,40 +206,49 @@ export default function Tab() {
 
   const [dropdownValue, setDropdownValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
-  // const [marginTop, setMarginTop] = useState(20);
 
+  const [dosageDropdownValue, setDosageDropdownValue] = useState(null);
+  const [isDosageFocus, setIsDosageFocus] = useState(false);
+  
+  const [dosageInputVisible, setDosageInputVisible] = useState(false); // State to control visibility of dosage TextInput
 
-  // useEffect(() => {
-  //   const keyboardDidShowListener = Keyboard.addListener(
-  //     'keyboardDidShow',
-  //     () => {
-  //       setMarginTop(500);
-  //     }
-  //   );
-  //   const keyboardDidHideListener = Keyboard.addListener(
-  //     'keyboardDidHide',
-  //     () => {
-  //       setMarginTop(20);
-  //     }
-  //   );
+  const [freqDropdownValue, setFreqDropdownValue] = useState(null);
+  const [isFreqFocus, setIsFreqFocus] = useState(false);
 
-  //   // Clean up listeners when component unmounts
-  //   return () => {
-  //     keyboardDidShowListener.remove();
-  //     keyboardDidHideListener.remove();
-  //   };
-  // }, []);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedEndDate, setSelectedEndDate] = useState(null);
+  
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [isEndDatePickerVisible, setEndDatePickerVisibility] = useState(false);
 
-  // const renderLabel = () => {
-  //   if ( dropdownValue || isFocus) {
-  //     return (
-  //       <Text style={[styles.label, isFocus && { color: 'blue' }]}>
-  //         Dropdown label
-  //       </Text>
-  //     );
-  //   }
-  //   return null;
-  // };
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date) => {
+    console.warn("A date has been picked: ", date);
+    setSelectedDate(date);
+    hideDatePicker();
+  };
+
+  const showEndDatePicker = () => {
+    setEndDatePickerVisibility(true);
+  };
+
+  const hideEndDatePicker = () => {
+    setEndDatePickerVisibility(false);
+  };
+
+  const handleEndConfirm = (date) => {
+    console.warn("A date has been picked: ", date);
+    setSelectedEndDate(date);
+    hideEndDatePicker();
+  };
+
 
   return (
     <View style={{ flex: 1, paddingHorizontal: 20 }}>
@@ -211,6 +320,8 @@ export default function Tab() {
                     onChange={item => {
                       setDropdownValue(item.id);
                       setIsFocus(false);
+                      // Show additional TextInput when a value is selected
+                      setDosageInputVisible(true);
                     }}
                     // renderLeftIcon={() => (
                     //   <AntDesign
@@ -221,6 +332,143 @@ export default function Tab() {
                     //   />
                     // )}
                   />
+
+
+                  {dosageInputVisible && (
+                    <View>
+                      <View style={{ flexDirection: 'row', paddingTop: 10}}>
+                        <TextInput
+                          style={{
+                            height: 50,
+                            borderColor: 'gray',
+                            borderRadius: 8,
+                            borderWidth: 0.5,
+                            paddingHorizontal: 10,
+                            marginBottom: 20,
+                            width: 210
+                          }}
+                          placeholder="Dosage amount"
+                        />
+                        <Dropdown
+                            style={[
+                              { borderColor: isDosageFocus ? 'blue' : 'gray' },
+                              {
+                                height: 50,
+                                borderColor: 'gray',
+                                borderWidth: 0.5,
+                                borderRadius: 8,
+                                paddingHorizontal: 8,
+                                marginLeft: 20,
+                                width: 120,
+                                marginBottom: 20
+                              }
+                            ]}
+                            placeholderStyle={styles.placeholderStyle}
+                            selectedTextStyle={styles.selectedTextStyle}
+                            inputSearchStyle={styles.inputSearchStyle}
+                            iconStyle={styles.iconStyle}
+                            data={dosageUnits}
+                            // search
+                            maxHeight={300}
+                            labelField="unit"
+                            valueField="id"
+                            placeholder={!isDosageFocus ? 'Units' : '...'}
+                            // searchPlaceholder="Search..."
+                            value={dosageDropdownValue}
+                            onFocus={() => setIsDosageFocus(true)}
+                            onBlur={() => setIsDosageFocus(false)}
+                            onChange={item => {
+                              setDosageDropdownValue(item.id);
+                              setIsDosageFocus(false);
+                            }}
+                          />
+                      </View>
+                      <Dropdown
+                        style={[
+                          { borderColor: isFreqFocus ? 'blue' : 'gray' },
+                          {
+                            height: 50,
+                            borderColor: 'gray',
+                            borderWidth: 0.5,
+                            borderRadius: 8,
+                            paddingHorizontal: 8,
+                            // marginLeft: 20,
+                            width: 350,
+                            marginBottom: 20
+                          }
+                        ]}
+                        placeholderStyle={styles.placeholderStyle}
+                        selectedTextStyle={styles.selectedTextStyle}
+                        inputSearchStyle={styles.inputSearchStyle}
+                        iconStyle={styles.iconStyle}
+                        data={frequencies}
+                        // search
+                        maxHeight={300}
+                        labelField="freq"
+                        valueField="id"
+                        placeholder={!isDosageFocus ? 'Frequency' : '...'}
+                        // searchPlaceholder="Search..."
+                        value={freqDropdownValue}
+                        onFocus={() => setIsFreqFocus(true)}
+                        onBlur={() => setIsFreqFocus(false)}
+                        onChange={item => {
+                          setFreqDropdownValue(item.id);
+                          setIsFreqFocus(false);
+                        }}
+                      />
+
+                      <View>
+                        {/* <Button title="Show Date Picker" onPress={showDatePicker} />
+                        <DateTimePickerModal
+                          isVisible={isDatePickerVisible}
+                          mode="date"
+                          onConfirm={handleConfirm}
+                          onCancel={hideDatePicker}
+                        /> */}
+                        <TextInput
+                          style={{
+                            height: 50,
+                            borderColor: 'gray',
+                            borderRadius: 8,
+                            borderWidth: 1,
+                            paddingHorizontal: 10,
+                            marginBottom: 20,
+                          }}
+                          placeholder="Medication start date"
+                          onFocus={showDatePicker}
+                          value={selectedDate ? selectedDate.toDateString() : ''}
+                        />
+
+                        <DateTimePickerModal
+                          isVisible={isDatePickerVisible}
+                          mode="date"
+                          onConfirm={handleConfirm}
+                          onCancel={hideDatePicker}
+                        />
+
+                        <TextInput
+                          style={{
+                            height: 50,
+                            borderColor: 'gray',
+                            borderRadius: 8,
+                            borderWidth: 1,
+                            paddingHorizontal: 10,
+                            marginBottom: 20,
+                          }}
+                          placeholder="Medication end date"
+                          onFocus={showEndDatePicker}
+                          value={selectedEndDate ? selectedEndDate.toDateString() : ''}
+                        />
+
+                        <DateTimePickerModal
+                          isVisible={isEndDatePickerVisible}
+                          mode="date"
+                          onConfirm={handleEndConfirm}
+                          onCancel={hideEndDatePicker}
+                        />
+                      </View>
+                  </View>
+                  )}
 
                   </View>
                   
