@@ -396,7 +396,7 @@ export default function Tab() {
                                       }}
                                       onPress={() => setModalVisible(!modalVisible)}
                                     >
-                                      <AntDesign name="closecircleo" size={24} color="black" style={{position: 'fixed'}} />
+                                      <AntDesign name="closecircleo" size={24} color="black"/>
                                     </TouchableOpacity>
                                     <Text style={styles.modalText}>Add Prescription</Text>
                                     <View>
@@ -605,7 +605,7 @@ export default function Tab() {
                             <FlatList
                                 data={prescriptionList}
                                 contentContainerStyle={{
-                                  paddingBottom: 200
+                                  paddingBottom: 300
                                 }}
                                 renderItem={({ item, index }) => (
                                     <MedicationCard
@@ -616,6 +616,7 @@ export default function Tab() {
                                         frequency={item.frequency}
                                         alerts={item?.alerts ?? []}
                                         index={index}
+                                        moreInfo={"Never take alchool with this drug."}
                                     />
                                 )} />
                         )
