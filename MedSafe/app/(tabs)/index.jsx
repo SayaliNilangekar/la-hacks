@@ -8,6 +8,8 @@ import DateTimePickerModal from "react-native-modal-datetime-picker";
 import MedicationCard from '../../components/MedicationCard';
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import { FontAwesome5 } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 
 import { Alert, Modal, StyleSheet, Pressable, FlatList } from 'react-native';
 
@@ -659,18 +661,30 @@ export default function Tab() {
                 onRequestClose={handleCloseModal}
             >
                 {modalData && (<ScrollView>
-                    <View style={{ marginTop: 22 }}>
+                    <View style={{ marginTop: 22, paddingLeft: 20 }}>
                         <View>
                             {/* Close button */}
                             <TouchableOpacity onPress={handleCloseModal}>
                                 <Ionicons name="close" size={24} color="black" style={{ alignSelf: 'flex-end', margin: 10 }} />
                             </TouchableOpacity>
 
+                            {/* Drug Interactions
+                            <View style={{flexDirection: 'row',}}>
+                              <FontAwesome5 name="pills" size={24} color="black" />
+                              <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 10, marginLeft: 10 }}>Drug Interactions Info</Text>
+                            </View> */}
+
                             {/* Drug Interactions */}
-                            <Text style={{ fontSize: 20, fontWeight: 'bold', margin: 10 }}>Drug Interactions Info</Text>
+                            {(modalData?.majorAlerts.length > 0 || modalData?.moderateAlerts.length > 0) && (
+                                <View style={{ flexDirection: 'row' }}>
+                                    <FontAwesome5 name="pills" size={24} color="black" />
+                                    <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 10, marginLeft: 10 }}>Drug Interactions Info</Text>
+                                </View>
+                            )}
+                            
                             {modalData?.majorAlerts.length > 0 && (
                                 <View style={{ marginLeft: 20 }}>
-                                    <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 5 }}>Major Alerts:</Text>
+                                    <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 5 }}>Major Alerts:</Text>
                                     <Text>
                                         {modalData.majorAlerts.map((alert, index) => (
                                             <Text key={index}>
@@ -682,7 +696,7 @@ export default function Tab() {
                             )}
                             {modalData?.moderateAlerts.length > 0 && (
                                 <View style={{ marginLeft: 20 }}>
-                                    <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 5 }}>Moderate Alerts:</Text>
+                                    <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 5 }}>Moderate Alerts:</Text>
                                     <Text>
                                         {modalData.moderateAlerts.map((alert, index) => (
                                             <Text key={index}>
@@ -694,7 +708,10 @@ export default function Tab() {
                             )}
 
                             {/* Useful Info */}
-                            <Text style={{ fontSize: 20, fontWeight: 'bold', margin: 10 }}>Useful Info</Text>
+                            <View style={{flexDirection: 'row'}}>
+                              <MaterialIcons name="medical-information" size={24} color="black" />
+                              <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 10, marginLeft: 10 }}>Useful Info</Text>
+                            </View>
                             <Text style={{ paddingLeft: 20 }}>{modalData?.moreInfo}</Text>
                         </View>
                     </View>
