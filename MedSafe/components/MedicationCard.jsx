@@ -71,17 +71,8 @@ const formatDate = (dateString) => {
     return colors[index % 3];
   };
 
-const MedicationCard = ({ index, medication, startDate, endDate, alerts, dosage, frequency, moreInfo }) => {
+const MedicationCard = ({ index, medication, startDate, endDate, alerts, dosage, frequency, moreInfo, handleCardPress }) => {
 
-    const [modalVisible, setModalVisible] = useState(false);
-
-    const handleCardPress = () => {
-        setModalVisible(true);
-    };
-
-    const handleCloseModal = () => {
-        setModalVisible(false);
-    };
 
     const formattedStartDate = formatDate(startDate);
     const formattedEndDate = formatDate(endDate);
@@ -133,7 +124,7 @@ const MedicationCard = ({ index, medication, startDate, endDate, alerts, dosage,
             right: 10,
             zIndex: 1, // Ensure the button is above the card
           }}
-          onPress={handleCardPress}
+          onPress={() => handleCardPress(medication, startDate, endDate, alerts, dosage, frequency, moreInfo)}
         >
           <Ionicons name="information-circle" size={24} color="black" />
         </TouchableOpacity>
@@ -249,54 +240,6 @@ const MedicationCard = ({ index, medication, startDate, endDate, alerts, dosage,
     {/* </TouchableOpacity> */}
 
     {/* Modal */}
-    <Modal
-    animationType="slide"
-    transparent={false}
-    visible={modalVisible}
-    onRequestClose={handleCloseModal}
->
-    <ScrollView>
-        <View style={{ marginTop: 22 }}>
-            <View>
-                {/* Close button */}
-                <TouchableOpacity onPress={handleCloseModal}>
-                    <Ionicons name="close" size={24} color="black" style={{ alignSelf: 'flex-end', margin: 10 }} />
-                </TouchableOpacity>
-
-                {/* Drug Interactions */}
-                <Text style={{ fontSize: 20, fontWeight: 'bold', margin: 10 }}>Drug Interactions Info</Text>
-                {majorAlerts.length > 0 && (
-                    <View style={{ marginLeft: 20 }}>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 5 }}>Major Alerts:</Text>
-                        <Text>
-                            {majorAlerts.map((alert, index) => (
-                                <Text key={index}>
-                                    {'\u2022'} {alert.reason}{'\n'}
-                                </Text>
-                            ))}
-                        </Text>
-                    </View>
-                )}
-                {moderateAlerts.length > 0 && (
-                    <View style={{ marginLeft: 20 }}>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 5 }}>Moderate Alerts:</Text>
-                        <Text>
-                            {moderateAlerts.map((alert, index) => (
-                                <Text key={index}>
-                                    {'\u2022'} {alert.reason}{'\n'}
-                                </Text>
-                            ))}
-                        </Text>
-                    </View>
-                )}
-
-                {/* Useful Info */}
-                <Text style={{ fontSize: 20, fontWeight: 'bold', margin: 10 }}>Useful Info</Text>
-                <Text style={{ paddingLeft: 20}}>{moreInfo}</Text>
-            </View>
-        </View>
-    </ScrollView>
-</Modal>
 </View>
   );
 }

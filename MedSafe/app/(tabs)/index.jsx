@@ -7,6 +7,7 @@ import drugsList from './druglist.json'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import MedicationCard from '../../components/MedicationCard';
 import { AntDesign } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 import { Alert, Modal, StyleSheet, Pressable, FlatList } from 'react-native';
 
@@ -238,6 +239,7 @@ const styles = StyleSheet.create({
 export default function Tab() {
 
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible2, setModalVisible2] = useState(false);
 
     const [dropdownValue, setDropdownValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
@@ -256,6 +258,8 @@ export default function Tab() {
 
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [isEndDatePickerVisible, setEndDatePickerVisibility] = useState(false);
+
+    const [modalData, setModalData] = useState();
 
     const [prescriptionList, setPrescriptionList] = useState([
         {
@@ -280,6 +284,25 @@ export default function Tab() {
         setDatePickerVisibility(true);
     };
 
+    const handleCloseModal = () => {
+        setModalVisible2(false);
+    };
+
+    const handleCardPress = (medication, startDate, endDate, alerts, dosage, frequency, moreInfo) => {
+        setModalData({
+            medication: medication,
+            startDate: startDate,
+            endDate: endDate,
+            alerts: alerts,
+            dosage: dosage,
+            frequency: frequency,
+            moreInfo: moreInfo,
+            majorAlerts: alerts.filter(alert => alert.level === 'Major'),
+            moderateAlerts: alerts.filter(alert => alert.level === 'Moderate')
+        })
+        setModalVisible2(true);
+    };
+
     const hideDatePicker = () => {
         setDatePickerVisibility(false);
     };
@@ -297,12 +320,12 @@ export default function Tab() {
         setEndDatePickerVisibility(false);
     };
 
-    const handleAdd = async() => {
+    const handleAdd = async () => {
         let errors = []
         for (const item of prescriptionList) {
             console.log(item)
             try {
-                resp = await fetch('http://192.168.215.97:5003/drugint/'+ item.id + '/' + dropdownValue)
+                resp = await fetch('http://192.168.215.97:5003/drugint/' + item.id + '/' + dropdownValue)
                 respJ = await resp.json();
                 // console.log(respJ)
                 errors.push(respJ)
@@ -356,276 +379,327 @@ export default function Tab() {
     return (
         <View style={{ flex: 1 }}>
 
-          <View style={{ backgroundColor: '#a6c7ff', height: 150, width: '100%',justifyContent: 'center', alignItems: 'center',  shadowColor: '#000',
-              shadowColor: '#000',
-              shadowOffset: {
-                  width: 0,
-                  height: 2,
-              },
-              shadowOpacity: 0.25,
-              shadowRadius: 4,
-              elevation: 5,}}>
-                  <Image source={require('../../assets/logo_horiz-transformed.png')} style={{ width: 300, marginTop: 35, resizeMode: 'contain' }} />
-          </View>
+            <View style={{
+                backgroundColor: '#a6c7ff', height: 150, width: '100%', justifyContent: 'center', alignItems: 'center', shadowColor: '#000',
+                shadowColor: '#000',
+                shadowOffset: {
+                    width: 0,
+                    height: 2,
+                },
+                shadowOpacity: 0.25,
+                shadowRadius: 4,
+                elevation: 5,
+            }}>
+                <Image source={require('../../assets/logo_horiz-transformed.png')} style={{ width: 300, marginTop: 35, resizeMode: 'contain' }} />
+            </View>
 
-          <View style={{ paddingHorizontal: 20 }}>
-            <View style={{ paddingTop: 20 }}>
-                <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>
-                    Hello Viral!
-                </Text>
+            <View style={{ paddingHorizontal: 20 }}>
+                <View style={{ paddingTop: 20 }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>
+                        Hello Viral!
+                    </Text>
 
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={modalVisible}
-                        onRequestClose={() => {
-                            Alert.alert('Modal has been closed.');
-                            setModalVisible(!modalVisible);
-                        }}>
-                        <ScrollView >
-                            <KeyboardAvoidingView >
-                                <View style={styles.centeredView}>
-                                    <View style={styles.modalView}>
-                                    <TouchableOpacity
-                                      style={{
-                                          position: 'absolute',
-                                          top: 10,
-                                          right: 10,
-                                          padding: 10
-                                      }}
-                                      onPress={() => setModalVisible(!modalVisible)}
-                                    >
-                                      <AntDesign name="closecircleo" size={24} color="black"/>
-                                    </TouchableOpacity>
-                                    <Text style={styles.modalText}>Add Prescription</Text>
-                                    <View>
-                                            <Dropdown
-                                                style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
-                                                placeholderStyle={styles.placeholderStyle}
-                                                selectedTextStyle={styles.selectedTextStyle}
-                                                inputSearchStyle={styles.inputSearchStyle}
-                                                iconStyle={styles.iconStyle}
-                                                data={drugsList}
-                                                search
-                                                maxHeight={300}
-                                                labelField="name"
-                                                valueField="id"
-                                                placeholder={!isFocus ? 'Medication name' : 'Select or search below'}
-                                                medicationmedication
-                                                searchPlaceholder="Start typing..."
-                                                value={dropdownValue}
-                                                onFocus={() => setIsFocus(true)}
-                                                onBlur={() => setIsFocus(false)}
-                                                onChange={item => {
-                                                    setDropdownValue(item.id);
-                                                    setIsFocus(false);
-                                                    // Show additional TextInput when a value is selected
-                                                    setDosageInputVisible(true);
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Modal
+                            animationType="slide"
+                            transparent={true}
+                            visible={modalVisible}
+                            onRequestClose={() => {
+                                Alert.alert('Modal has been closed.');
+                                setModalVisible(!modalVisible);
+                            }}>
+                            <ScrollView >
+                                <KeyboardAvoidingView >
+                                    <View style={styles.centeredView}>
+                                        <View style={styles.modalView}>
+                                            <TouchableOpacity
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: 10,
+                                                    right: 10,
+                                                    padding: 10
                                                 }}
+                                                onPress={() => setModalVisible(!modalVisible)}
+                                            >
+                                                <AntDesign name="closecircleo" size={24} color="black" />
+                                            </TouchableOpacity>
+                                            <Text style={styles.modalText}>Add Prescription</Text>
+                                            <View>
+                                                <Dropdown
+                                                    style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                                                    placeholderStyle={styles.placeholderStyle}
+                                                    selectedTextStyle={styles.selectedTextStyle}
+                                                    inputSearchStyle={styles.inputSearchStyle}
+                                                    iconStyle={styles.iconStyle}
+                                                    data={drugsList}
+                                                    search
+                                                    maxHeight={300}
+                                                    labelField="name"
+                                                    valueField="id"
+                                                    placeholder={!isFocus ? 'Medication name' : 'Select or search below'}
+                                                    medicationmedication
+                                                    searchPlaceholder="Start typing..."
+                                                    value={dropdownValue}
+                                                    onFocus={() => setIsFocus(true)}
+                                                    onBlur={() => setIsFocus(false)}
+                                                    onChange={item => {
+                                                        setDropdownValue(item.id);
+                                                        setIsFocus(false);
+                                                        // Show additional TextInput when a value is selected
+                                                        setDosageInputVisible(true);
+                                                    }}
 
-                                            />
+                                                />
 
 
-                                            {dosageInputVisible && (
-                                                <View style={{ paddingTop: 10 }}>
-                                                    <View>
-                                                        <TextInput
-                                                            style={{
-                                                                height: 50,
-                                                                borderColor: 'gray',
-                                                                borderRadius: 8,
-                                                                borderWidth: 0.5,
-                                                                paddingHorizontal: 10,
-                                                                marginBottom: 20,
-                                                                fontSize: 16,
-                                                            }}
-                                                            placeholder="Medication start date"
-                                                            placeholderTextColor="gray"
-                                                            onFocus={showDatePicker}
-                                                            value={selectedDate ? selectedDate.toDateString() : ''}
-                                                        />
+                                                {dosageInputVisible && (
+                                                    <View style={{ paddingTop: 10 }}>
+                                                        <View>
+                                                            <TextInput
+                                                                style={{
+                                                                    height: 50,
+                                                                    borderColor: 'gray',
+                                                                    borderRadius: 8,
+                                                                    borderWidth: 0.5,
+                                                                    paddingHorizontal: 10,
+                                                                    marginBottom: 20,
+                                                                    fontSize: 16,
+                                                                }}
+                                                                placeholder="Medication start date"
+                                                                placeholderTextColor="gray"
+                                                                onFocus={showDatePicker}
+                                                                value={selectedDate ? selectedDate.toDateString() : ''}
+                                                            />
 
-                                                        <DateTimePickerModal
-                                                            isVisible={isDatePickerVisible}
-                                                            mode="date"
-                                                            onConfirm={handleConfirm}
-                                                            onCancel={hideDatePicker}
-                                                        />
+                                                            <DateTimePickerModal
+                                                                isVisible={isDatePickerVisible}
+                                                                mode="date"
+                                                                onConfirm={handleConfirm}
+                                                                onCancel={hideDatePicker}
+                                                            />
 
-                                                        <TextInput
-                                                            style={{
-                                                                height: 50,
-                                                                borderColor: 'gray',
-                                                                borderRadius: 8,
-                                                                borderWidth: 0.5,
-                                                                paddingHorizontal: 10,
-                                                                marginBottom: 20,
-                                                                marginTop: 10,
-                                                                fontSize: 16,
-                                                            }}
-                                                            placeholder="Medication end date"
-                                                            placeholderTextColor="gray"
-                                                            onFocus={showEndDatePicker}
-                                                            value={selectedEndDate ? selectedEndDate.toDateString() : ''}
-                                                        />
+                                                            <TextInput
+                                                                style={{
+                                                                    height: 50,
+                                                                    borderColor: 'gray',
+                                                                    borderRadius: 8,
+                                                                    borderWidth: 0.5,
+                                                                    paddingHorizontal: 10,
+                                                                    marginBottom: 20,
+                                                                    marginTop: 10,
+                                                                    fontSize: 16,
+                                                                }}
+                                                                placeholder="Medication end date"
+                                                                placeholderTextColor="gray"
+                                                                onFocus={showEndDatePicker}
+                                                                value={selectedEndDate ? selectedEndDate.toDateString() : ''}
+                                                            />
 
-                                                        <DateTimePickerModal
-                                                            isVisible={isEndDatePickerVisible}
-                                                            mode="date"
-                                                            onConfirm={handleEndConfirm}
-                                                            onCancel={hideEndDatePicker}
-                                                        />
-                                                    </View>
-                                                    <View style={{ flexDirection: 'row' }}>
-                                                        <TextInput
-                                                            style={{
-                                                                height: 50,
-                                                                borderColor: 'gray',
-                                                                borderRadius: 8,
-                                                                borderWidth: 0.5,
-                                                                paddingHorizontal: 10,
-                                                                marginBottom: 20,
-                                                                marginTop: 10,
-                                                                width: 210,
-                                                                fontSize: 16,
-                                                            }}
-                                                            placeholder="Dosage amount"
-                                                            placeholderTextColor="gray"
-                                                            value={dosageAmount}
-                                                            onChangeText={setDosageAmount}
-                                                        />
+                                                            <DateTimePickerModal
+                                                                isVisible={isEndDatePickerVisible}
+                                                                mode="date"
+                                                                onConfirm={handleEndConfirm}
+                                                                onCancel={hideEndDatePicker}
+                                                            />
+                                                        </View>
+                                                        <View style={{ flexDirection: 'row' }}>
+                                                            <TextInput
+                                                                style={{
+                                                                    height: 50,
+                                                                    borderColor: 'gray',
+                                                                    borderRadius: 8,
+                                                                    borderWidth: 0.5,
+                                                                    paddingHorizontal: 10,
+                                                                    marginBottom: 20,
+                                                                    marginTop: 10,
+                                                                    width: 210,
+                                                                    fontSize: 16,
+                                                                }}
+                                                                placeholder="Dosage amount"
+                                                                placeholderTextColor="gray"
+                                                                value={dosageAmount}
+                                                                onChangeText={setDosageAmount}
+                                                            />
+                                                            <Dropdown
+                                                                style={[
+                                                                    { borderColor: isDosageFocus ? 'blue' : 'gray' },
+                                                                    {
+                                                                        height: 50,
+                                                                        borderColor: 'gray',
+                                                                        borderWidth: 0.5,
+                                                                        borderRadius: 8,
+                                                                        paddingHorizontal: 8,
+                                                                        marginLeft: 20,
+                                                                        width: 120,
+                                                                        marginBottom: 20,
+                                                                        marginTop: 10
+                                                                    }
+                                                                ]}
+                                                                placeholderStyle={styles.placeholderStyle}
+                                                                selectedTextStyle={styles.selectedTextStyle}
+                                                                inputSearchStyle={styles.inputSearchStyle}
+                                                                iconStyle={styles.iconStyle}
+                                                                data={dosageUnits}
+                                                                // search
+                                                                maxHeight={300}
+                                                                labelField="unit"
+                                                                valueField="id"
+                                                                placeholder={!isDosageFocus ? 'Units' : '...'}
+                                                                // searchPlaceholder="Search..."
+                                                                value={dosageDropdownValue}
+                                                                onFocus={() => setIsDosageFocus(true)}
+                                                                onBlur={() => setIsDosageFocus(false)}
+                                                                onChange={item => {
+                                                                    setDosageDropdownValue(item.id);
+                                                                    setIsDosageFocus(false);
+                                                                }}
+                                                            />
+                                                        </View>
                                                         <Dropdown
                                                             style={[
-                                                                { borderColor: isDosageFocus ? 'blue' : 'gray' },
+                                                                { borderColor: isFreqFocus ? 'blue' : 'gray' },
                                                                 {
                                                                     height: 50,
                                                                     borderColor: 'gray',
                                                                     borderWidth: 0.5,
                                                                     borderRadius: 8,
                                                                     paddingHorizontal: 8,
-                                                                    marginLeft: 20,
-                                                                    width: 120,
-                                                                    marginBottom: 20,
-                                                                    marginTop: 10
+                                                                    width: 350,
+                                                                    marginBottom: 30,
+                                                                    marginTop: 10,
                                                                 }
                                                             ]}
                                                             placeholderStyle={styles.placeholderStyle}
                                                             selectedTextStyle={styles.selectedTextStyle}
                                                             inputSearchStyle={styles.inputSearchStyle}
                                                             iconStyle={styles.iconStyle}
-                                                            data={dosageUnits}
+                                                            data={frequencies}
                                                             // search
                                                             maxHeight={300}
-                                                            labelField="unit"
+                                                            labelField="freq"
                                                             valueField="id"
-                                                            placeholder={!isDosageFocus ? 'Units' : '...'}
+                                                            placeholder={!isDosageFocus ? 'Frequency' : '...'}
                                                             // searchPlaceholder="Search..."
-                                                            value={dosageDropdownValue}
-                                                            onFocus={() => setIsDosageFocus(true)}
-                                                            onBlur={() => setIsDosageFocus(false)}
+                                                            value={freqDropdownValue}
+                                                            onFocus={() => setIsFreqFocus(true)}
+                                                            onBlur={() => setIsFreqFocus(false)}
                                                             onChange={item => {
-                                                                setDosageDropdownValue(item.id);
-                                                                setIsDosageFocus(false);
+                                                                setFreqDropdownValue(item.id);
+                                                                setIsFreqFocus(false);
                                                             }}
                                                         />
+
+                                                        <Pressable
+                                                            style={[styles.button, styles.buttonClose]}
+                                                            onPress={handleAdd}>
+                                                            <Text style={styles.textStyle}>Save</Text>
+                                                        </Pressable>
                                                     </View>
-                                                    <Dropdown
-                                                        style={[
-                                                            { borderColor: isFreqFocus ? 'blue' : 'gray' },
-                                                            {
-                                                                height: 50,
-                                                                borderColor: 'gray',
-                                                                borderWidth: 0.5,
-                                                                borderRadius: 8,
-                                                                paddingHorizontal: 8,
-                                                                width: 350,
-                                                                marginBottom: 30,
-                                                                marginTop: 10,
-                                                            }
-                                                        ]}
-                                                        placeholderStyle={styles.placeholderStyle}
-                                                        selectedTextStyle={styles.selectedTextStyle}
-                                                        inputSearchStyle={styles.inputSearchStyle}
-                                                        iconStyle={styles.iconStyle}
-                                                        data={frequencies}
-                                                        // search
-                                                        maxHeight={300}
-                                                        labelField="freq"
-                                                        valueField="id"
-                                                        placeholder={!isDosageFocus ? 'Frequency' : '...'}
-                                                        // searchPlaceholder="Search..."
-                                                        value={freqDropdownValue}
-                                                        onFocus={() => setIsFreqFocus(true)}
-                                                        onBlur={() => setIsFreqFocus(false)}
-                                                        onChange={item => {
-                                                            setFreqDropdownValue(item.id);
-                                                            setIsFreqFocus(false);
-                                                        }}
-                                                    />
+                                                )}
 
-                                                    <Pressable
-                                                        style={[styles.button, styles.buttonClose]}
-                                                        onPress={handleAdd}>
-                                                        <Text style={styles.textStyle}>Save</Text>
-                                                    </Pressable>
-                                                </View>
-                                            )}
-
+                                            </View>
                                         </View>
                                     </View>
+                                </KeyboardAvoidingView>
+                            </ScrollView>
+                        </Modal>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 20 }}>
+                            Prescriptions
+                        </Text>
+                        <TouchableOpacity
+                            style={{
+                                backgroundColor: '#3b7be8',
+                                // paddingVertical: 12,
+                                borderRadius: 8,
+                                alignItems: 'center',
+                                fontSize: 12,
+                                padding: 5,
+                                marginBottom: 10,
+                                height: 35,
+                                width: 60
+                            }}
+                            onPress={() => setModalVisible(true)}
+                        >
+                            <Text style={{ color: 'white', fontSize: 16 }}>+ Add</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={{ marginBottom: 20, marginTop: 20 }}>
+                        {
+                            prescriptionList && (
+                                <FlatList
+                                    data={prescriptionList}
+                                    contentContainerStyle={{
+                                        paddingBottom: 300
+                                    }}
+                                    renderItem={({ item, index }) => (
+                                        <MedicationCard
+                                            medication={item.medication}
+                                            startDate={item.startDate.toLocaleDateString()}
+                                            endDate={item.endDate.toLocaleDateString()}
+                                            dosage={item.dosageAmount}
+                                            frequency={item.frequency}
+                                            alerts={item?.alerts ?? []}
+                                            index={index}
+                                            moreInfo={"Never take alchool with this drug."}
+                                            handleCardPress={handleCardPress}
+                                        />
+                                    )} />
+                            )
+                        }
+                    </View>
+
+
+                </View>
+            </View>
+            <Modal
+                animationType="slide"
+                transparent={false}
+                visible={modalVisible2}
+                onRequestClose={handleCloseModal}
+            >
+                {modalData && (<ScrollView>
+                    <View style={{ marginTop: 22 }}>
+                        <View>
+                            {/* Close button */}
+                            <TouchableOpacity onPress={handleCloseModal}>
+                                <Ionicons name="close" size={24} color="black" style={{ alignSelf: 'flex-end', margin: 10 }} />
+                            </TouchableOpacity>
+
+                            {/* Drug Interactions */}
+                            <Text style={{ fontSize: 20, fontWeight: 'bold', margin: 10 }}>Drug Interactions Info</Text>
+                            {modalData?.majorAlerts.length > 0 && (
+                                <View style={{ marginLeft: 20 }}>
+                                    <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 5 }}>Major Alerts:</Text>
+                                    <Text>
+                                        {modalData.majorAlerts.map((alert, index) => (
+                                            <Text key={index}>
+                                                {'\u2022'} {alert.reason}{'\n'}
+                                            </Text>
+                                        ))}
+                                    </Text>
                                 </View>
-                            </KeyboardAvoidingView>
-                        </ScrollView>
-                    </Modal>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 20 }}>
-                        Prescriptions
-                    </Text>
-                    <TouchableOpacity
-                        style={{
-                            backgroundColor: '#3b7be8',
-                            // paddingVertical: 12,
-                            borderRadius: 8,
-                            alignItems: 'center',
-                            fontSize: 12,
-                            padding: 5,
-                            marginBottom: 10,
-                            height: 35,
-                            width: 60
-                        }}
-                        onPress={() => setModalVisible(true)}
-                    >
-                        <Text style={{ color: 'white', fontSize: 16 }}>+ Add</Text>
-                    </TouchableOpacity>
-                </View>
+                            )}
+                            {modalData?.moderateAlerts.length > 0 && (
+                                <View style={{ marginLeft: 20 }}>
+                                    <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 5 }}>Moderate Alerts:</Text>
+                                    <Text>
+                                        {modalData.moderateAlerts.map((alert, index) => (
+                                            <Text key={index}>
+                                                {'\u2022'} {alert.reason}{'\n'}
+                                            </Text>
+                                        ))}
+                                    </Text>
+                                </View>
+                            )}
 
-                <View style={{ marginBottom: 20, marginTop: 20 }}>
-                    {
-                        prescriptionList && (
-                            <FlatList
-                                data={prescriptionList}
-                                contentContainerStyle={{
-                                  paddingBottom: 300
-                                }}
-                                renderItem={({ item, index }) => (
-                                    <MedicationCard
-                                        medication={item.medication}
-                                        startDate={item.startDate.toLocaleDateString()}
-                                        endDate={item.endDate.toLocaleDateString()}
-                                        dosage={item.dosageAmount}
-                                        frequency={item.frequency}
-                                        alerts={item?.alerts ?? []}
-                                        index={index}
-                                        moreInfo={"Never take alchool with this drug."}
-                                    />
-                                )} />
-                        )
-                    }
-                </View>
-
-
-            </View>
-            </View>
+                            {/* Useful Info */}
+                            <Text style={{ fontSize: 20, fontWeight: 'bold', margin: 10 }}>Useful Info</Text>
+                            <Text style={{ paddingLeft: 20 }}>{modalData?.moreInfo}</Text>
+                        </View>
+                    </View>
+                </ScrollView>)}
+            </Modal>
         </View>
     );
 }
