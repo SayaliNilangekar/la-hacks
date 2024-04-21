@@ -10,6 +10,7 @@ import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { Alert, Modal, StyleSheet, Pressable, FlatList } from 'react-native';
 
@@ -651,7 +652,7 @@ export default function Tab() {
                                 <FlatList
                                     data={prescriptionList}
                                     contentContainerStyle={{
-                                        paddingBottom: 300
+                                        paddingBottom: 450
                                     }}
                                     renderItem={({ item, index }) => (
                                         <MedicationCard
@@ -681,7 +682,7 @@ export default function Tab() {
                 onRequestClose={handleCloseModal}
             >
                 {modalData && (<ScrollView>
-                    <View style={{ marginTop: 22, paddingLeft: 20 }}>
+                    <View style={{ marginTop: 22, paddingLeft: 20, paddingRight: 20 }}>
                         <View>
                             {/* Close button */}
                             <TouchableOpacity onPress={handleCloseModal}>
@@ -698,14 +699,14 @@ export default function Tab() {
                             {(modalData?.majorAlerts.length > 0 || modalData?.moderateAlerts.length > 0) && (
                                 <View style={{ flexDirection: 'row' }}>
                                     <FontAwesome5 name="pills" size={24} color="black" />
-                                    <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 10, marginLeft: 10 }}>Drug Interactions Info</Text>
+                                    <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 10, marginLeft: 7 }}>Drug Interactions Info</Text>
                                 </View>
                             )}
                             
                             {modalData?.majorAlerts.length > 0 && (
-                                <View style={{ marginLeft: 20 }}>
+                                <View style={{ marginLeft: 25 }}>
                                     <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 5 }}>Major Alerts:</Text>
-                                    <Text>
+                                    <Text >
                                         {modalData.majorAlerts.map((alert, index) => (
                                             <Text key={index}>
                                                 {'\u2022'} {alert.reason}{'\n'}
@@ -715,9 +716,9 @@ export default function Tab() {
                                 </View>
                             )}
                             {modalData?.moderateAlerts.length > 0 && (
-                                <View style={{ marginLeft: 20 }}>
+                                <View style={{ marginLeft: 25 }}>
                                     <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 5 }}>Moderate Alerts:</Text>
-                                    <Text>
+                                    <Text >
                                         {modalData.moderateAlerts.map((alert, index) => (
                                             <Text key={index}>
                                                 {'\u2022'} {alert.reason}{'\n'}
@@ -730,9 +731,19 @@ export default function Tab() {
                             {/* Useful Info */}
                             <View style={{flexDirection: 'row'}}>
                               <MaterialIcons name="medical-information" size={24} color="black" />
-                              <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 10, marginLeft: 10 }}>Useful Info</Text>
+                              <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 7, marginLeft: 7 }}>Useful Info</Text>
                             </View>
-                            <Text style={{ paddingLeft: 20 }}>{modalData?.moreInfo}</Text>
+                            <Text style={{ paddingLeft: 25 }}>{modalData?.moreInfo}</Text>
+
+                            {/* Food Info */}
+                            <View style={{flexDirection: 'row', paddingTop: 10}}>
+                              <MaterialCommunityIcons name="food-apple" size={24} color="black" />
+                              <Text style={{ fontSize: 22, fontWeight: 'bold', marginBottom: 7, marginLeft: 7 }}>Food Info</Text>
+                            </View>
+                            <Text style={{ paddingLeft: 25 }}>{modalData?.food}</Text>
+                        </View>
+                        <View style={{ flexDirection: 'column', justifyContent: 'center'  }}>
+                          <Image source={require('../../assets/Doctors-pana.png')} style={{ width: 400, height: 350, justifyContent: 'center'}} />
                         </View>
                     </View>
                 </ScrollView>)}
