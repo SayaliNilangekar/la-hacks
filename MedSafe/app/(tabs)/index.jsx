@@ -230,7 +230,6 @@ export default function Tab() {
   };
 
   const handleConfirm = (date) => {
-    console.warn("A date has been picked: ", date);
     setSelectedDate(date);
     hideDatePicker();
   };
