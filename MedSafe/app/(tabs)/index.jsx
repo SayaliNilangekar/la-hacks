@@ -5,6 +5,7 @@ import { ListItem } from '@rneui/themed';
 import { Dropdown } from 'react-native-element-dropdown';
 import drugsList from './druglist.json'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import MedicationCard from '../../components/MedicationCard';
 
 import {Alert, Modal, StyleSheet, Pressable } from 'react-native';
 
@@ -177,10 +178,10 @@ const styles = StyleSheet.create({
     top: 8,
     zIndex: 999,
     paddingHorizontal: 8,
-    fontSize: 14,
+    fontSize: 16,
   },
   placeholderStyle: {
-    fontSize: 14,
+    fontSize: 16,
     color: 'gray'
   },
   selectedTextStyle: {
@@ -286,56 +287,36 @@ export default function Tab() {
                 <View style={styles.modalView}>
                   <Text style={styles.modalText}>Add a new prescription medication</Text>
                   <View>
-                    {/* <TextInput
-                      style={{
-                        height: 50,
-                        width: 365,
-                        borderColor: 'gray',
-                        borderRadius: 8,
-                        borderWidth: 1,
-                        paddingHorizontal: 10,
-                        marginBottom: 20,
+                    
+                    <Dropdown
+                      style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
+                      placeholderStyle={styles.placeholderStyle}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      inputSearchStyle={styles.inputSearchStyle}
+                      iconStyle={styles.iconStyle}
+                      data={drugsList}
+                      search
+                      maxHeight={300}
+                      labelField="name"
+                      valueField="id"
+                      placeholder={!isFocus ? 'Medication name' : '...'}
+                      searchPlaceholder="Search..."
+                      value={dropdownValue}
+                      onFocus={() => setIsFocus(true)}
+                      onBlur={() => setIsFocus(false)}
+                      onChange={item => {
+                        setDropdownValue(item.id);
+                        setIsFocus(false);
+                        // Show additional TextInput when a value is selected
+                        setDosageInputVisible(true);
                       }}
-                      placeholder="Search for medication"
-                    /> */}
-
-          {/* {renderLabel()} */}
-                  <Dropdown
-                    style={[styles.dropdown, isFocus && { borderColor: 'blue' }]}
-                    placeholderStyle={styles.placeholderStyle}
-                    selectedTextStyle={styles.selectedTextStyle}
-                    inputSearchStyle={styles.inputSearchStyle}
-                    iconStyle={styles.iconStyle}
-                    data={drugsList}
-                    search
-                    maxHeight={300}
-                    labelField="name"
-                    valueField="id"
-                    placeholder={!isFocus ? 'Select item' : '...'}
-                    searchPlaceholder="Search..."
-                    value={dropdownValue}
-                    onFocus={() => setIsFocus(true)}
-                    onBlur={() => setIsFocus(false)}
-                    onChange={item => {
-                      setDropdownValue(item.id);
-                      setIsFocus(false);
-                      // Show additional TextInput when a value is selected
-                      setDosageInputVisible(true);
-                    }}
-                    // renderLeftIcon={() => (
-                    //   <AntDesign
-                    //     style={styles.icon}
-                    //     color={isFocus ? 'blue' : 'black'}
-                    //     name="Safety"
-                    //     size={20}
-                    //   />
-                    // )}
-                  />
+                      
+                    />
 
 
                   {dosageInputVisible && (
-                    <View>
-                      <View style={{ flexDirection: 'row', paddingTop: 10}}>
+                    <View style={{ paddingTop: 10}}>
+                      <View>
                         <TextInput
                           style={{
                             height: 50,
@@ -344,6 +325,52 @@ export default function Tab() {
                             borderWidth: 0.5,
                             paddingHorizontal: 10,
                             marginBottom: 20,
+                            fontSize: 16,
+                          }}
+                          placeholder="Medication start date"
+                          onFocus={showDatePicker}
+                          value={selectedDate ? selectedDate.toDateString() : ''}
+                        />
+
+                        <DateTimePickerModal
+                          isVisible={isDatePickerVisible}
+                          mode="date"
+                          onConfirm={handleConfirm}
+                          onCancel={hideDatePicker}
+                        />
+
+                        <TextInput
+                          style={{
+                            height: 50,
+                            borderColor: 'gray',
+                            borderRadius: 8,
+                            borderWidth: 0.5,
+                            paddingHorizontal: 10,
+                            marginBottom: 20,
+                            marginTop: 10
+                          }}
+                          placeholder="Medication end date"
+                          onFocus={showEndDatePicker}
+                          value={selectedEndDate ? selectedEndDate.toDateString() : ''}
+                        />
+
+                        <DateTimePickerModal
+                          isVisible={isEndDatePickerVisible}
+                          mode="date"
+                          onConfirm={handleEndConfirm}
+                          onCancel={hideEndDatePicker}
+                        />
+                      </View>
+                      <View style={{ flexDirection: 'row'}}>
+                        <TextInput
+                          style={{
+                            height: 50,
+                            borderColor: 'gray',
+                            borderRadius: 8,
+                            borderWidth: 0.5,
+                            paddingHorizontal: 10,
+                            marginBottom: 20,
+                            marginTop: 10,
                             width: 210
                           }}
                           placeholder="Dosage amount"
@@ -359,7 +386,8 @@ export default function Tab() {
                                 paddingHorizontal: 8,
                                 marginLeft: 20,
                                 width: 120,
-                                marginBottom: 20
+                                marginBottom: 20,
+                                marginTop: 10
                               }
                             ]}
                             placeholderStyle={styles.placeholderStyle}
@@ -393,7 +421,8 @@ export default function Tab() {
                             paddingHorizontal: 8,
                             // marginLeft: 20,
                             width: 350,
-                            marginBottom: 20
+                            marginBottom: 30,
+                            marginTop: 10,
                           }
                         ]}
                         placeholderStyle={styles.placeholderStyle}
@@ -416,56 +445,7 @@ export default function Tab() {
                         }}
                       />
 
-                      <View>
-                        {/* <Button title="Show Date Picker" onPress={showDatePicker} />
-                        <DateTimePickerModal
-                          isVisible={isDatePickerVisible}
-                          mode="date"
-                          onConfirm={handleConfirm}
-                          onCancel={hideDatePicker}
-                        /> */}
-                        <TextInput
-                          style={{
-                            height: 50,
-                            borderColor: 'gray',
-                            borderRadius: 8,
-                            borderWidth: 1,
-                            paddingHorizontal: 10,
-                            marginBottom: 20,
-                          }}
-                          placeholder="Medication start date"
-                          onFocus={showDatePicker}
-                          value={selectedDate ? selectedDate.toDateString() : ''}
-                        />
-
-                        <DateTimePickerModal
-                          isVisible={isDatePickerVisible}
-                          mode="date"
-                          onConfirm={handleConfirm}
-                          onCancel={hideDatePicker}
-                        />
-
-                        <TextInput
-                          style={{
-                            height: 50,
-                            borderColor: 'gray',
-                            borderRadius: 8,
-                            borderWidth: 1,
-                            paddingHorizontal: 10,
-                            marginBottom: 20,
-                          }}
-                          placeholder="Medication end date"
-                          onFocus={showEndDatePicker}
-                          value={selectedEndDate ? selectedEndDate.toDateString() : ''}
-                        />
-
-                        <DateTimePickerModal
-                          isVisible={isEndDatePickerVisible}
-                          mode="date"
-                          onConfirm={handleEndConfirm}
-                          onCancel={hideEndDatePicker}
-                        />
-                      </View>
+                      
                   </View>
                   )}
 
@@ -503,7 +483,7 @@ export default function Tab() {
         </View>
 
         <View style={{ marginBottom: 20 , marginTop: 20}}>
-          <View
+          {/* <View
             style={{
               backgroundColor: '#dbf8a1',
               borderRadius: 10,
@@ -535,9 +515,9 @@ export default function Tab() {
               <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'grey', paddingLeft: 15, paddingRight: 20 }}>DOSAGE</Text>
               <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'grey', paddingLeft: 15}}>FREQUENCY</Text>
             </View>
-          </View>
+          </View> */}
           
-          <View
+          {/* <View
             style={{
               backgroundColor: '#c0e6f5',
               borderRadius: 10,
@@ -568,7 +548,19 @@ export default function Tab() {
               <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'grey', paddingLeft: 15, paddingRight: 20 }}>DOSAGE</Text>
               <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'grey', paddingLeft: 15}}>FREQUENCY</Text>
             </View>
-          </View>
+          </View> */}
+          <MedicationCard
+            medication="Selegiline"
+            startDate="01 Apr 2024"
+            endDate="15 Apr 2024"
+            status="ACTIVE"
+          />
+          <MedicationCard
+            medication="Tetrabenazine"
+            startDate="05 Apr 2024"
+            endDate="15 Apr 2024"
+            status="SCHEDULED"
+          />
         </View>
 
         
