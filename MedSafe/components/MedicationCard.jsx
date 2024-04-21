@@ -71,7 +71,7 @@ const formatDate = (dateString) => {
     return colors[index % 3];
   };
 
-const MedicationCard = ({ index, medication, startDate, endDate, alerts, dosage, frequency, moreInfo, handleCardPress }) => {
+const MedicationCard = ({ index, medication, startDate, endDate, alerts, dosage, frequency, moreInfo, handleCardPress, food }) => {
 
 
     const formattedStartDate = formatDate(startDate);
@@ -124,7 +124,7 @@ const MedicationCard = ({ index, medication, startDate, endDate, alerts, dosage,
             right: 10,
             zIndex: 1, // Ensure the button is above the card
           }}
-          onPress={() => handleCardPress(medication, startDate, endDate, alerts, dosage, frequency, moreInfo)}
+          onPress={() => handleCardPress(medication, startDate, endDate, alerts, dosage, frequency, moreInfo, food)}
         >
           <Ionicons name="information-circle" size={24} color="black" />
         </TouchableOpacity>
