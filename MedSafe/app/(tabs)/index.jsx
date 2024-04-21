@@ -1,4 +1,4 @@
-import { Button, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, ScrollView, Image } from 'react-native';
+import { Button, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Keyboard, ScrollView, Image, ActivityIndicator } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { Feather } from '@expo/vector-icons'; // Import the Feather icon set
 import { ListItem } from '@rneui/themed';
@@ -246,6 +246,8 @@ export default function Tab() {
     const [dropdownValue, setDropdownValue] = useState(null);
     const [isFocus, setIsFocus] = useState(false);
 
+    const [isSavingData, setIsSavingData] = useState(false);
+
     const [dosageDropdownValue, setDosageDropdownValue] = useState(null);
     const [isDosageFocus, setIsDosageFocus] = useState(false);
 
@@ -270,7 +272,9 @@ export default function Tab() {
             startDate: new Date(2024, 2, 1),
             endDate: new Date(2024, 4, 25),
             dosageAmount: "3 mg",
-            frequency: 'Once a day'
+            frequency: 'Once a day',
+            moreInfo: 'Ibuprofen is a nonsteroidal anti-inflammatory drug (NSAID) used to relieve pain, fever, and inflammation. It can be used for a wide range of conditions, including headaches, back pain, arthritis, and menstrual cramps.',
+            food: 'Ibruprofen can interact with blood thinners, anticoagulants, and alcohol, increasing the risk of bleeding. Avoid consuming caffeine, as it may enhance the absorption of ibuprofen, leading to increased side effects.'
         },
         {
             id: 1,
@@ -279,6 +283,8 @@ export default function Tab() {
             endDate: new Date(2024, 4, 25),
             dosageAmount: "4 ml",
             frequency: 'Once a week',
+            moreInfo: 'Abacavir is an antiretroviral drug used in combination with other medications to treat HIV infection and prevent AIDS.',
+            food: 'Alcohol can reduce the blood levels of Abacavir, potentially decreasing its effectiveness.'
         }
     ]);
 
@@ -290,7 +296,7 @@ export default function Tab() {
         setModalVisible2(false);
     };
 
-    const handleCardPress = (medication, startDate, endDate, alerts, dosage, frequency, moreInfo) => {
+    const handleCardPress = (medication, startDate, endDate, alerts, dosage, frequency, moreInfo, food) => {
         setModalData({
             medication: medication,
             startDate: startDate,
@@ -300,7 +306,8 @@ export default function Tab() {
             frequency: frequency,
             moreInfo: moreInfo,
             majorAlerts: alerts.filter(alert => alert.level === 'Major'),
-            moderateAlerts: alerts.filter(alert => alert.level === 'Moderate')
+            moderateAlerts: alerts.filter(alert => alert.level === 'Moderate'),
+            food: food
         })
         setModalVisible2(true);
     };
@@ -323,6 +330,7 @@ export default function Tab() {
     };
 
     const handleAdd = async () => {
+        setIsSavingData(true);
         let errors = []
         for (const item of prescriptionList) {
             console.log(item)
@@ -338,6 +346,8 @@ export default function Tab() {
         try {
             resp = await fetch('http://192.168.215.97:5003/gemai/' + dropdownValue + '/' + dosageAmount + ' ' + units[dosageDropdownValue] + '/' + freq[freqDropdownValue])
             respJ = await resp.json();
+            resp2 = await fetch('http://192.168.215.97:5003/gemai2/' + dropdownValue)
+            respJ2 = await resp2.json();
             // console.log(respJ)
             errors.push(respJ)
         } catch {
@@ -353,7 +363,9 @@ export default function Tab() {
                 endDate: selectedEndDate,
                 dosageAmount: dosageAmount + ' ' + units[dosageDropdownValue],
                 frequency: freq[freqDropdownValue],
-                alerts: errors
+                alerts: errors,
+                moreInfo: respJ2.desc,
+                food: respJ2.food,
             }
         ])
         setModalVisible(false);
@@ -369,6 +381,7 @@ export default function Tab() {
         setDatePickerVisibility(false);
         setEndDatePickerVisibility(false);
         setDosageAmount(null);
+        setIsSavingData(false);
     };
 
     const handleEndConfirm = (date) => {
@@ -590,12 +603,18 @@ export default function Tab() {
                                                                 setIsFreqFocus(false);
                                                             }}
                                                         />
+                                                        {
+                                                            isSavingData ? (
+                                                                <ActivityIndicator />
+                                                            ) : (
+                                                                <TouchableOpacity
+                                                                    style={[styles.button, styles.buttonClose]}
+                                                                    onPress={handleAdd}>
+                                                                    <Text style={styles.textStyle}>Save</Text>
+                                                                </TouchableOpacity>
+                                                            )
+                                                        }
 
-                                                        <Pressable
-                                                            style={[styles.button, styles.buttonClose]}
-                                                            onPress={handleAdd}>
-                                                            <Text style={styles.textStyle}>Save</Text>
-                                                        </Pressable>
                                                     </View>
                                                 )}
 
@@ -643,7 +662,8 @@ export default function Tab() {
                                             frequency={item.frequency}
                                             alerts={item?.alerts ?? []}
                                             index={index}
-                                            moreInfo={"Never take alchool with this drug."}
+                                            moreInfo={item.moreInfo}
+                                            food={item.food}
                                             handleCardPress={handleCardPress}
                                         />
                                     )} />
@@ -653,7 +673,7 @@ export default function Tab() {
 
 
                 </View>
-            </View>
+            </View >
             <Modal
                 animationType="slide"
                 transparent={false}
@@ -717,6 +737,6 @@ export default function Tab() {
                     </View>
                 </ScrollView>)}
             </Modal>
-        </View>
+        </View >
     );
 }

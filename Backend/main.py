@@ -82,6 +82,14 @@ def gemai_call(id, dose, freq):
         return { 'level': "Unkown", 'reason': '' }
     return {'level': level, 'reason': obj["reason"] }
 
+@app.route('/gemai2/<string:id>')
+def gemai2_call(id):
+    prompt1 = "I am precribed " + drugDict[int(id)] + " drug. What are possible food interactions I should be aware about? Give me in 1-2 lines."
+    prompt2 = "I am precribed " + drugDict[int(id)] + " drug. What are is this drug used for? Give me in 1-2 lines."
+    response1 = model.generate_content(prompt1, safety_settings={HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE})
+    response2 = model.generate_content(prompt2, safety_settings={HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE})
+    return {'desc': response2.text, 'food': response1.text }
+
 
 if __name__ == '__main__':
     conn = sqlite3.connect("drugdata.db")  # Use this path for Vercel deployment, not working on local, need to fix
