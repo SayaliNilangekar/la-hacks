@@ -7,7 +7,9 @@ import drugsList from './druglist.json'
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import MedicationCard from '../../components/MedicationCard';
 
-import {Alert, Modal, StyleSheet, Pressable } from 'react-native';
+import {Alert, Modal, StyleSheet, Pressable, FlatList } from 'react-native';
+
+import drugDict from '../../assets/drugdict.json';
 
 const frequencies = [
   {
@@ -201,8 +203,6 @@ const styles = StyleSheet.create({
 
 export default function Tab() {
 
-  const [expandedOne, setExpandedOne] = useState(false);
-  const [expandedTwo, setExpandedTwo] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
   const [dropdownValue, setDropdownValue] = useState(null);
@@ -221,6 +221,19 @@ export default function Tab() {
   
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [isEndDatePickerVisible, setEndDatePickerVisibility] = useState(false);
+
+  const [prescriptionList, setPrescriptionList] = useState([
+    {
+        medication: "Selegiline",
+        startDate: new Date(2024, 4, 1),
+        endDate: new Date(2024, 4, 25)
+    },
+    {
+        medication: "Tetrabenazine",
+        startDate: new Date(2024, 4, 22),
+        endDate: new Date(2024, 4, 25)
+    }
+  ]);
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -242,6 +255,29 @@ export default function Tab() {
   const hideEndDatePicker = () => {
     setEndDatePickerVisibility(false);
   };
+
+  const handleAdd = () => {
+    setPrescriptionList([
+        ...prescriptionList,
+        {
+            medication: drugDict[dropdownValue],
+            startDate: selectedDate,
+            endDate: selectedEndDate,
+        }
+    ])
+    setModalVisible(false);
+    setDropdownValue(null);
+    setIsFocus(false);
+    setDosageDropdownValue(null);
+    setIsDosageFocus(false);
+    setDosageInputVisible(false);
+    setFreqDropdownValue(null);
+    setIsFreqFocus(false);
+    setSelectedDate(null);
+    setSelectedEndDate(null);
+    setDatePickerVisibility(false);
+    setEndDatePickerVisibility(false);
+  }
 
   const handleEndConfirm = (date) => {
     console.warn("A date has been picked: ", date);
@@ -268,6 +304,7 @@ export default function Tab() {
               flex: 1, // Allow TextInput to take remaining space
             }}
             placeholder="Search for medication"
+            placeholderTextColor="gray"
           />
         </View>
 
@@ -280,7 +317,6 @@ export default function Tab() {
               Alert.alert('Modal has been closed.');
               setModalVisible(!modalVisible);
             }}>
-            {/* <KeyboardAvoidingView style={styles.centeredView} behavior="padding" keyboardVerticalOffset={-400}> */}
             <ScrollView >
             <KeyboardAvoidingView >
               <View style={styles.centeredView}>
@@ -300,6 +336,7 @@ export default function Tab() {
                       labelField="name"
                       valueField="id"
                       placeholder={!isFocus ? 'Medication name' : '...'}
+                      medicationmedication
                       searchPlaceholder="Search..."
                       value={dropdownValue}
                       onFocus={() => setIsFocus(true)}
@@ -328,6 +365,7 @@ export default function Tab() {
                             fontSize: 16,
                           }}
                           placeholder="Medication start date"
+                          placeholderTextColor="gray"
                           onFocus={showDatePicker}
                           value={selectedDate ? selectedDate.toDateString() : ''}
                         />
@@ -350,6 +388,7 @@ export default function Tab() {
                             marginTop: 10
                           }}
                           placeholder="Medication end date"
+                          placeholderTextColor="gray"
                           onFocus={showEndDatePicker}
                           value={selectedEndDate ? selectedEndDate.toDateString() : ''}
                         />
@@ -374,6 +413,7 @@ export default function Tab() {
                             width: 210
                           }}
                           placeholder="Dosage amount"
+                          placeholderTextColor="gray"
                         />
                         <Dropdown
                             style={[
@@ -419,7 +459,6 @@ export default function Tab() {
                             borderWidth: 0.5,
                             borderRadius: 8,
                             paddingHorizontal: 8,
-                            // marginLeft: 20,
                             width: 350,
                             marginBottom: 30,
                             marginTop: 10,
@@ -445,7 +484,11 @@ export default function Tab() {
                         }}
                       />
 
-                      
+                    <Pressable
+                        style={[styles.button, styles.buttonClose]}
+                        onPress={handleAdd}>
+                        <Text style={styles.textStyle}>SAVE</Text>
+                    </Pressable>
                   </View>
                   )}
 
@@ -483,90 +526,21 @@ export default function Tab() {
         </View>
 
         <View style={{ marginBottom: 20 , marginTop: 20}}>
-          {/* <View
-            style={{
-              backgroundColor: '#dbf8a1',
-              borderRadius: 10,
-              padding: 20,
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 0,
-                height: 1,
-              },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-              elevation: 5,
-              height: 150,
-              marginBottom: 20,
-              flexDirection: 'column',
-              justifyContent: 'space-between'
-            }}
-          >
-            
-            <View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: 18, fontWeight: 'bold'}}>Selegiline</Text>
-                <Text style={{ fontSize: 14, paddingTop: 2 }}>01 Apr 2024 - 15 Apr 2024</Text>
-              </View>
-              <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'green'}}>ACTIVE</Text>
-            </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', alignContent: 'flex-end'}}>
-              <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'grey', paddingRight: 20 }}>DURATION</Text>
-              <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'grey', paddingLeft: 15, paddingRight: 20 }}>DOSAGE</Text>
-              <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'grey', paddingLeft: 15}}>FREQUENCY</Text>
-            </View>
-          </View> */}
-          
-          {/* <View
-            style={{
-              backgroundColor: '#c0e6f5',
-              borderRadius: 10,
-              padding: 20,
-              shadowColor: '#000',
-              shadowOffset: {
-                width: 0,
-                height: 1,
-              },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-              elevation: 5,
-              height: 150,
-              marginBottom: 20,
-              flexDirection: 'column',
-              justifyContent: 'space-between'
-            }}
-          >
-            <View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <Text style={{ fontSize: 18, fontWeight: 'bold'}}>Tetrabenazine</Text>
-                <Text style={{ fontSize: 14, paddingTop: 2 }}>05 Apr 2024 - 15 Apr 2024</Text>
-              </View>
-              <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'grey'}}>SCHEDULED</Text>
-            </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', alignContent: 'flex-end'}}>
-              <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'grey', paddingRight: 20 }}>DURATION</Text>
-              <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'grey', paddingLeft: 15, paddingRight: 20 }}>DOSAGE</Text>
-              <Text style={{ fontSize: 13, fontWeight: 'bold', color: 'grey', paddingLeft: 15}}>FREQUENCY</Text>
-            </View>
-          </View> */}
-          <MedicationCard
-            medication="Selegiline"
-            startDate="04/01/2024"
-            endDate="04/26/2024"
-            status="ACTIVE"
-            alert="This medication should not be used with Tetra. This medication should not be used with Tetra. This medication should not be used with Tetra."
-            duration="2 weeks"
-            dosage="23 mg"
-            frequency="Once every day"
-          />
-          <MedicationCard
-            medication="Tetrabenazine"
-            startDate="05/05/2024"
-            endDate="05/15/2024"
-            status="SCHEDULED"
-            dosage="5 ml"
-            frequency="2 times a day"
-          />
+          {
+            prescriptionList && (
+                <FlatList 
+                data={prescriptionList}
+                renderItem={({item, index}) => (
+                    <MedicationCard
+                        medication={item.medication}
+                        startDate="05 Apr 2024"
+                        endDate="15 Apr 2024"
+                        status="SCHEDULED"
+                        key={index}
+                    />
+            )} />
+            )
+            }
         </View>
 
         
